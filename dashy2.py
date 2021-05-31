@@ -68,6 +68,8 @@ fig = go.Figure()
 fig.add_trace(go.Scatter(x=date[::-1], y=reco, name='Recovered'))
 fig.add_trace(go.Scatter(x=date[::-1], y=confi, name='Confirmed '))
 fig.update_traces(mode="markers+lines", hovertemplate=None)
+fig.update_xaxes(fixedrange=True)
+fig.update_yaxes(fixedrange=True)
 fig.update_layout(paper_bgcolor="LightSteelBlue", font_family="Courier New", hovermode="x unified",
                   title={
                       'text': "Daily Covid Positive & Recovered cases in D&NH",
@@ -91,6 +93,8 @@ fig1.add_trace(go.Bar(x=date[::-1], y=acto, marker_color='#ffa07a', showlegend=F
 fig1.add_trace(go.Scatter(x=date[::-1], y=vax, mode='lines+markers', name='Vaccinations', line=dict(color='#3978ed'),
                           hovertemplate='<b>Date</b>:%{x}<br><b>Vaccinations</b>:%{y}'), row=2, col=2)
 fig1.add_trace(go.Bar(x=date[::-1], y=vax, marker_color='#63f5f7', showlegend=False, hoverinfo="none"), row=2, col=2)
+fig1.update_xaxes(fixedrange=True)
+fig1.update_yaxes(fixedrange=True)
 fig1.update_layout(
     font_family="Courier New",
     height=500,
@@ -104,7 +108,8 @@ fig2.append_trace(go.Bar(x=date2[::-1], y=tp[::-1], name='Total +ve'), row=1, co
 fig2.append_trace(go.Bar(x=date2[::-1], y=rt[::-1], name='RT-PCR'), row=1, col=2)
 fig2.append_trace(go.Bar(x=date2[::-1], y=rat[::-1], name='Rapid Antigen'), row=1, col=2)
 fig2.append_trace(go.Bar(x=date2[::-1], y=test2[::-1], name='Total Tests'), row=1, col=2)
-
+fig2.update_xaxes(fixedrange=True)
+fig2.update_yaxes(fixedrange=True)
 fig2.update_layout(paper_bgcolor="LightSteelBlue", font_family="Courier New", barmode='stack', hovermode="x unified",
                    title={
                        'text': "Multiple Test Data of D&NH",
