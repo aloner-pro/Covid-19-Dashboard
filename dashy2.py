@@ -51,9 +51,7 @@ for i in range(1, len(td)):
 
 def zero_to_nan(values):
     val = np.array(values, dtype=np.double)
-    val[4] = np.nan
-    val[25] = np.nan
-    # val[ val==0 ] = np.nan
+    val[ val==0 ] = np.nan
     return val
 
 
@@ -64,9 +62,9 @@ tests = zero_to_nan(test[::-1])
 vax = zero_to_nan(vac[::-1])
 acto = zero_to_nan(acti[::-1])
 
-#fig = make_subplots(rows=1, cols=2,specs=[[{'type': 'Scattergeo'}, {'type': 'Scatter'}]])
+# fig = make_subplots(rows=1, cols=2,specs=[[{'type': 'Scattergeo'}, {'type': 'Scatter'}]])
 fig = go.Figure()
-#fig.add_trace(go.Scattergeo(lat=[27.1751],lon=[78.0421],locations = ['asia']), row=1, col=1)
+# fig.add_trace(go.Scattergeo(lat=[27.1751],lon=[78.0421]), row=1, col=1)
 fig.add_trace(go.Scatter(x=date[::-1], y=reco, name='Recovered'))
 fig.add_trace(go.Scatter(x=date[::-1], y=confi, name='Confirmed '))
 fig.update_traces(mode="markers+lines", hovertemplate=None)
@@ -129,7 +127,8 @@ app.title = 'D&NH Covid-19| Dashboard'
 app.layout = html.Div(children=[
     html.Div([
         html.H2(children='Dadra & Nagar Haveli Covid-19 Analysis', style={"text-align": "center", "color": "red"}),
-        html.Label(['Made with ❤️ by - ', html.A('Sohel Ahmed', href='https://github.com/aloner-pro')],
+        html.Label(['Made with ❤️ by - ', html.A('Sohel Ahmed', href='https://github.com/aloner-pro'), 
+                    ' & ', html.A('Ritesh Prasad', href="https://covidfacility.dddgov.in/")],
                    style={"text-align": "center"}),
         html.Label([html.A('Covid Bed Facility Portal', href="https://covidfacility.dddgov.in/")],
                    style={"text-align": "center"}),
