@@ -13,7 +13,7 @@ my_file = os.path.join(THIS_FOLDER, 'dnhcovid - dnhcovid.csv')
 with open(my_file, 'r') as d:
     td = list(csv.reader(d))
 
-date, conf, rec, test, cont, vac, acti, date2, rt, rat, test2, rtp, ratp, tp = [], [], [], [], [], [], [], [], [], [], [], [], [], []
+date, conf, rec, test, cont, vac, acti, date2, rt, rat, test2, rtp, ratp, tp, vity = [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
 
 for i in range(1, len(td)):
     if td[i][0] == '17-04-2021':
@@ -54,6 +54,11 @@ def zero_to_nan(values):
     val[ val==0 ] = np.nan
     return val
 
+for i in range(len(date)):
+    try:
+        vity += [(conf[::-1][i]/test[::-1][i])*100]
+    except:
+        vity += [0]
 
 confi = zero_to_nan(conf[::-1])
 reco = zero_to_nan(rec[::-1])
@@ -120,6 +125,20 @@ fig2.update_layout(paper_bgcolor="LightSteelBlue", font_family="Courier New", ba
                    yaxis_title='Numbers',
                    legend_title="Contents")
 
+fig3 = go.Figure()
+fig3.add_trace(go.Scatter(x=date[::-1], y=vity, mode='markers+lines', name='Positivity Rate', line=dict(color="#fc8c03"),
+                        hovertemplate='<b>Date</b>: %{x}<br><b>Positivity</b>: %{y} %'))
+fig3.add_trace(go.Bar(x=date[::-1], y=vity, marker_color='#f7cd99', showlegend=False, hoverinfo="none"))
+fig3.update_layout(paper_bgcolor="LightSteelBlue", font_family="Courier New",
+                  title={
+                      'text': "Daily Covid Positivity Rate in D&NH",
+                      'y': 0.9,
+                      'x': 0.5,
+                      'xanchor': 'center',
+                      'yanchor': 'top'},
+                  xaxis_title="Date", yaxis_title="Positivity",
+                  legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
+
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -148,6 +167,12 @@ app.layout = html.Div(children=[
         dcc.Graph(
             id='graph3',
             figure=fig2
+        ),
+    ]),
+    html.Div([
+        dcc.Graph(
+            id='graph4',
+            figure=fig3
         ),
         html.Label([html.A('Data Source', href="https://dnh.gov.in/category/press-release/")],
                    style={"text-align": "center"}),
