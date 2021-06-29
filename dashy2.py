@@ -9,6 +9,7 @@ import os
 
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 my_file = os.path.join(THIS_FOLDER, 'dnhcovid - dnhcovid.csv')
+my_file2 = os.path.join(THIS_FOLDER, 'vax.txt')
 
 with open(my_file, 'r') as d:
     td = list(csv.reader(d))
@@ -51,12 +52,13 @@ for i in range(1, len(td)):
 
 def zero_to_nan(values):
     val = np.array(values, dtype=np.double)
-    val[ val==0 ] = np.nan
+    val[val == 0] = np.nan
     return val
+
 
 for i in range(len(date)):
     try:
-        vity += [(conf[::-1][i]/test[::-1][i])*100]
+        vity += [(conf[::-1][i] / test[::-1][i]) * 100]
     except:
         vity += [0]
 
@@ -67,9 +69,7 @@ tests = zero_to_nan(test[::-1])
 vax = zero_to_nan(vac[::-1])
 acto = zero_to_nan(acti[::-1])
 
-# fig = make_subplots(rows=1, cols=2,specs=[[{'type': 'Scattergeo'}, {'type': 'Scatter'}]])
 fig = go.Figure()
-# fig.add_trace(go.Scattergeo(lat=[27.1751],lon=[78.0421]), row=1, col=1)
 fig.add_trace(go.Scatter(x=date[::-1], y=reco, name='Recovered'))
 fig.add_trace(go.Scatter(x=date[::-1], y=confi, name='Confirmed '))
 fig.update_traces(mode="markers+lines", hovertemplate=None)
@@ -125,19 +125,34 @@ fig2.update_layout(paper_bgcolor="LightSteelBlue", font_family="Courier New", ba
                    yaxis_title='Numbers',
                    legend_title="Contents")
 
-fig3 = go.Figure()
-fig3.add_trace(go.Scatter(x=date[::-1], y=vity, mode='markers+lines', name='Positivity Rate', line=dict(color="#fc8c03"),
-                        hovertemplate='<b>Date</b>: %{x}<br><b>Positivity</b>: %{y} %'))
+with open(my_file2, 'r') as v:
+    dt = [int(i) for i in v.readline().split()]
+    print(dt)
+    dt2 = v.read()
+    per = (dt[1] / dt[0]) * 100
+    per2 = 100 - per
+
+fig3 = make_subplots(rows=1, cols=2, subplot_titles=['Total {} doses given.'.format(dt2), ''],
+                     specs=[[{'type': 'domain'}, {'type': 'xy'}]])
+fig3.add_trace(
+    go.Pie(labels=['Alleast one dose', 'No dose'], values=[per, per2], name="Vaccination"), 1, 1)
+colors = ['darkorange', 'lightgreen']
+fig3.update_traces(hoverinfo='label+percent+name', textinfo='percent+label', insidetextorientation='radial',
+                   marker=dict(colors=colors, line=dict(color='#000000', width=2)), hole=0.4, textfont_size=15)
+
+fig3.add_trace(
+    go.Scatter(x=date[::-1], y=vity, mode='markers+lines', name='Positivity Rate', line=dict(color="#fc8c03"),
+               hovertemplate='<b>Date</b>: %{x}<br><b>Positivity</b>: %{y} %'), 1, 2)
 fig3.add_trace(go.Bar(x=date[::-1], y=vity, marker_color='#f7cd99', showlegend=False, hoverinfo="none"))
 fig3.update_layout(paper_bgcolor="LightSteelBlue", font_family="Courier New",
-                  title={
-                      'text': "Daily Covid Positivity Rate in D&NH",
-                      'y': 0.9,
-                      'x': 0.5,
-                      'xanchor': 'center',
-                      'yanchor': 'top'},
-                  xaxis_title="Date", yaxis_title="Positivity",
-                  legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
+                   title={
+                       'text': "Daily Covid Positivity & Vaccination in D&NH",
+                       'y': 0.9,
+                       'x': 0.5,
+                       'xanchor': 'center',
+                       'yanchor': 'top'},
+                   xaxis_title="Date", yaxis_title="Positivity",
+                   legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -146,12 +161,18 @@ app.title = 'D&NH Covid-19| Dashboard'
 app.layout = html.Div(children=[
     html.Div([
         html.H2(children='Dadra & Nagar Haveli Covid-19 Analysis', style={"text-align": "center", "color": "red"}),
-        html.Label(['Made with ❤️ by - ', html.A('Sohel Ahmed', href='https://github.com/aloner-pro'), 
+        html.Label(['Made with ❤️ by - ', html.A('Sohel Ahmed', href='https://github.com/aloner-pro'),
                     ' & ', html.A('Ritesh Prasad', href="https://covidfacility.dddgov.in/")],
                    style={"text-align": "center"}),
         html.Label([html.A('Covid Bed Facility Portal', href="https://covidfacility.dddgov.in/")],
                    style={"text-align": "center"}),
         html.H6(['* Daily Updated'], style={"text-align": "right", "color": "red"}),
+        dcc.Graph(
+            id='graph4',
+            figure=fig3
+        ),
+    ]),
+    html.Div([
         dcc.Graph(
             id='graph1',
             figure=fig
@@ -168,15 +189,9 @@ app.layout = html.Div(children=[
             id='graph3',
             figure=fig2
         ),
-    ]),
-    html.Div([
-        dcc.Graph(
-            id='graph4',
-            figure=fig3
-        ),
         html.Label([html.A('Data Source', href="https://dnh.gov.in/category/press-release/")],
                    style={"text-align": "center"}),
-    ]),
+    ])
 ])
 
 if __name__ == "__main__":
