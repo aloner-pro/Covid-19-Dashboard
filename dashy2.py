@@ -130,12 +130,13 @@ with open(my_file2, 'r') as v:
     print(dt)
     dt2 = v.read()
     per = (dt[1] / dt[0]) * 100
-    per2 = 100 - per
+    per2 = (dt[2] / dt[0]) * 100
+    per3 = 100-(per2+per)
 
 fig3 = make_subplots(rows=1, cols=2, subplot_titles=['Total {} doses given.'.format(dt2), ''],
                      specs=[[{'type': 'domain'}, {'type': 'xy'}]])
 fig3.add_trace(
-    go.Pie(labels=['Alleast one dose', 'No dose'], values=[per, per2], name="Vaccination"), 1, 1)
+    go.Pie(labels=['One dose', 'Two dose', 'No dose'], values=[per, per2, per3], name="Vaccination"), 1, 1)
 colors = ['darkorange', 'lightgreen']
 fig3.update_traces(hoverinfo='label+percent+name', textinfo='percent+label', insidetextorientation='radial',
                    marker=dict(colors=colors, line=dict(color='#000000', width=2)), hole=0.4, textfont_size=15)
