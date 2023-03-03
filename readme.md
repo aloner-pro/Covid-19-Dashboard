@@ -1,5 +1,5 @@
 # Covid-19 Dashboard
-**Website out of use**
+### *Website out of use as pandemic is long over*
 ### For Dadra & Nagar Haveli
 It is a simple Covid-19 dashboard for **Dadra & Nagar Haveli**.
 This project is a part of my contribution to end the Covid Crisis.
